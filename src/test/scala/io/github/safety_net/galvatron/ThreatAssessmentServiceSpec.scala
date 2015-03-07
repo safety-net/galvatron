@@ -5,7 +5,7 @@ import spray.testkit.Specs2RouteTest
 import spray.http._
 import StatusCodes._
 
-class ThreadAssessmentServiceSpec extends Specification with Specs2RouteTest with ThreadAssessmentService {
+class ThreatAssessmentServiceSpec extends Specification with Specs2RouteTest with ThreatAssessmentService {
   def actorRefFactory = system
 
   "MyService" should {
