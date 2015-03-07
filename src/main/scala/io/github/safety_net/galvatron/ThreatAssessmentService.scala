@@ -1,13 +1,16 @@
 package io.github.safety_net.galvatron
 
 import akka.actor.Actor
+import io.github.safety_net.galvatron.models.ThreatAssessment
 import spray.routing._
 import spray.http._
 import MediaTypes._
+import spray.httpx.SprayJsonSupport._
+import io.github.safety_net.galvatron.models.ThreatAssessmentJsonProtocol._
 
 // we don't implement our route structure directly in the service actor because
 // we want to be able to test it independently, without having to spin up an actor
-class ThreadAssessmentServiceActor extends Actor with ThreadAssessmentService {
+class ThreatAssessmentServiceActor extends Actor with ThreatAssessmentService {
 
   // the HttpService trait defines only one abstract member, which
   // connects the services environment to the enclosing actor or test
@@ -20,18 +23,16 @@ class ThreadAssessmentServiceActor extends Actor with ThreadAssessmentService {
 }
 
 // this trait defines our service behavior independently from the service actor
-trait ThreadAssessmentService extends HttpService {
+trait ThreatAssessmentService extends HttpService {
 
   val myRoute =
     path("threatAssessments") {
       get {
-        respondWithMediaType(`text/html`) { // XML is marshalled to `text/xml` by default, so we simply override here
-          complete {
-            <html>
-              <body>
-                <h1>Say hello to <i>spray-routing</i> on <i>spray-can</i>!</h1>
-              </body>
-            </html>
+        parameter("twitterUsername") { username =>
+          respondWithMediaType(`application/json`) {
+            complete {
+              ThreatAssessment(twitterUsername = username, isBot = true)
+            }
           }
         }
       }
