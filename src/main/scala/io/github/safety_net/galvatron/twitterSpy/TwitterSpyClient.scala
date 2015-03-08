@@ -41,7 +41,7 @@ class TwitterSpyClientActor(twitterId: Long) extends Actor {
   var previousFollowerIds: Set[Long] = null
 
   override def preStart() = {
-    context.system.scheduler.schedule(0 seconds, 10 seconds, self, CheckForNewFollowers)
+    context.system.scheduler.schedule(0 seconds, 10 minutes, self, CheckForNewFollowers)
   }
 
   def receive = {
