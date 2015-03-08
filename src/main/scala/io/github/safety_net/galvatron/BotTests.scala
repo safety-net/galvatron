@@ -1,7 +1,6 @@
 package io.github.safety_net.galvatron
 
-import com.ning.http.client._
-import twitter4j.{User, ResponseList, TwitterFactory, Twitter}
+import twitter4j._
 import twitter4j.conf.ConfigurationBuilder
 
 class BotTests(consumerKey:String,consumerSecret:String,accessToken:String,accessTokenSecret:String) {
