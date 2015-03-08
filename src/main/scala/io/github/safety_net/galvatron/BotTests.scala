@@ -5,7 +5,7 @@ import twitter4j.conf.ConfigurationBuilder
 
 class BotTests(consumerKey:String,consumerSecret:String,accessToken:String,accessTokenSecret:String) {
 
-  // (1) config work to create a twitter object
+  // create a twitter object
   val cb = new ConfigurationBuilder()
   cb.setDebugEnabled(true)
     .setOAuthConsumerKey(consumerKey)
@@ -14,10 +14,11 @@ class BotTests(consumerKey:String,consumerSecret:String,accessToken:String,acces
     .setOAuthAccessTokenSecret(accessTokenSecret)
   val tf = new TwitterFactory(cb.build())
   val twitter = tf.getInstance()
+  println(twitter)
 
   def friendRatioCheck(username: String): Double = {
 
-    val user = twitter.showUser(username)
+    val user: User = twitter.showUser(username)
     val followerCount = user.getFollowersCount()
     val friendCount = user.getFriendsCount()
 
