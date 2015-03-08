@@ -1,7 +1,7 @@
 package io.github.safety_net.galvatron.twitterSpy
 
 import akka.actor._
-import io.github.safety_net.galvatron.twitterSpy.TwitterSpyClientActor.{DetectedNewFollower, CheckForNewFollowers}
+import io.github.safety_net.galvatron.twitterSpy.TwitterSpyClientActor.{DetectedNewFollowers, CheckForNewFollowers}
 import io.github.safety_net.galvatron.twitterSpy.sdk.TwitterClient
 
 import scala.concurrent.duration._
@@ -32,7 +32,7 @@ object TwitterSpyClientActor {
 
   case object CheckForNewFollowers
 
-  case class DetectedNewFollower(followerId: Long)
+  case class DetectedNewFollowers(followerIds: Set[Long])
 }
 
 class TwitterSpyClientActor(twitterId: Long) extends Actor {
@@ -41,13 +41,13 @@ class TwitterSpyClientActor(twitterId: Long) extends Actor {
   var previousFollowerIds: Set[Long] = null
 
   override def preStart() = {
-    context.system.scheduler.schedule(0 seconds, 10 seconds, self, CheckForNewFollowers)
+    context.system.scheduler.schedule(0 seconds, 10 minutes, self, CheckForNewFollowers)
   }
 
   def receive = {
     case CheckForNewFollowers =>
       println(s"Looking up followers for Twitter ID: $twitterId")
-      val followers = lookupFollowers(twitterId)
+      val followers = TwitterClient.allFollowers(twitterId).toSet
 
       println(s"Found followers: $followers")
 
@@ -59,20 +59,14 @@ class TwitterSpyClientActor(twitterId: Long) extends Actor {
 
       println(s"New followers: $newFollowers")
 
-      newFollowers.foreach(followerId => self ! DetectedNewFollower(followerId))
+      if (newFollowers.nonEmpty)
+        self ! DetectedNewFollowers(newFollowers)
 
       previousFollowerIds = followers
-    case DetectedNewFollower(followerId) =>
-      val isBot = checkIsBot(followerId)
-
-      if (isBot)
-        blockUser(followerId)
+    case DetectedNewFollowers(followerIds) =>
+      val followersToBlock = followerIds.filter(id => checkIsBot(id))
+      TwitterClient.blockUsers(followersToBlock)
   }
 
-  private def lookupFollowers(twitterId: Long): Set[Long] =
-    TwitterClient.allFollowers().toSet
-
   private def checkIsBot(twitterId: Long): Boolean = ???
-
-  private def blockUser(twitterId: Long): Unit = ???
 }
