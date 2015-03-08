@@ -20,8 +20,11 @@ class BotTestsSpec extends Specification {
       val filename = "src/test/resources/twitterKeys.keys"
       val keyLines = Source.fromFile(filename).getLines().toList
       val botTests = new BotTests(keyLines(0),keyLines(1),keyLines(2),keyLines(3))
-      val user = "JosephKirwin"
+      // SomeBot user
+      val user = "dmoran850"
       val result = botTests.friendRatioCheck(user)
+      println(result)
+      println()
       (result > 0) must beTrue
     }
   }

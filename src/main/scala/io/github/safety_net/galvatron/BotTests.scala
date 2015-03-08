@@ -23,10 +23,12 @@ class BotTests(consumerKey:String,consumerSecret:String,accessToken:String,acces
     val friendCount = user.getFriendsCount()
 
     // We don't want to deal with the no friend or followers case
-    if (followerCount == 0 || friendCount == 0)
+    if (friendCount == 0 || followerCount == 0)
       return 0
 
-    val ratio:Double = friendCount / followerCount
+    // If this percentage is low then it means the
+    // user is following much more than are following them.
+    val ratio:Double = (followerCount.toDouble) / friendCount
     return ratio
   }
 
