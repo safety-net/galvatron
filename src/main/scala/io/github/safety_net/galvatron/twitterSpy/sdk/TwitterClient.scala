@@ -1,7 +1,6 @@
 package io.github.safety_net.galvatron.twitterSpy.sdk
 
 import twitter4j._
-
 import scala.annotation.tailrec
 
 object TwitterClient {

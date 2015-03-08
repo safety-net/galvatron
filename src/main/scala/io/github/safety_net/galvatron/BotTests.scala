@@ -40,9 +40,12 @@ class BotTests(consumerKey:String,consumerSecret:String,accessToken:String,acces
       status = tweets.get(i)
     ) yield status
 
+    //We don't want retweets or any posts with urls for this type of detection
     val trimmed: List[String] = list.filter(status => status.getURLEntities().isEmpty && !status.isRetweet()).map(x => x.getText())
     println("Trimmed tweet count returned: %d".format(trimmed.length))
     println("Sample tweet %s".format(trimmed(0)))
+    if(trimmed.isEmpty)
+      return 0
     val query: Query = new Query(trimmed(0))
     val searchResult: QueryResult = twitter.search(query)
     searchResult.getCount()
