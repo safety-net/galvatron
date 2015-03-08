@@ -7,7 +7,7 @@ class BotTestsSpec extends Specification {
 
   lazy val lzBotTests = {
     // TODO gitcrypt
-    // file with twitterKeys not to be commited!!
+    // file with twitterKeys not to be committed!!
     // structure
     // ConsumerKey \n
     // ConsumerSecret \n
@@ -15,15 +15,35 @@ class BotTestsSpec extends Specification {
     // AccessTokenSecret
     val filename = "src/test/resources/twitterKeys.keys"
     val keyLines = Source.fromFile(filename).getLines().toList
-    new BotTests(keyLines(0),keyLines(1),keyLines(2),keyLines(3))
+    new BotTests(keyLines(0), keyLines(1), keyLines(2), keyLines(3))
   }
 
-  "friendRatioCheck" should{
-    "returns results for valid user" in {
-      // SomeBot user
-      val user = "dmoran850"
-      val result = lzBotTests.friendRatioCheck(user)
-      println(result)
+  "isBot" should {
+    "determine the given user is a bot" in {
+      val username = "Vanessa_Daviss" // Some bot user
+      val result = lzBotTests.isBot(username)
+      if (result)
+        println(s"user: '$username' is a bot")
+        println()
+      result must beTrue
+    }
+  }
+
+  "reciprocationPercentage" should {
+    "return results for valid user" in {
+      val username = "dmoran850" // Some bot user
+      val result = lzBotTests.reciprocationPercentage(username)
+      println(f"Reciprocation percentage: $result%.3f")
+      println()
+      (result > 0) must beTrue
+    }
+  }
+
+  "maxDupeTweetCount" should {
+    "return dupe quote count for bot user" in {
+      val username = "Vanessa_Daviss" // Some bot user
+      val result = lzBotTests.maxDupeTweetCount(username)
+      println(s"Dupe count: $result")
       println()
       (result > 0) must beTrue
     }
