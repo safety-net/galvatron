@@ -47,7 +47,7 @@ class TwitterSpyClientActor(twitterId: Long) extends Actor {
   def receive = {
     case CheckForNewFollowers =>
       println(s"Looking up followers for Twitter ID: $twitterId")
-      val followers = lookupFollowers(twitterId)
+      val followers = TwitterClient.allFollowers(twitterId).toSet
 
       println(s"Found followers: $followers")
 
@@ -59,19 +59,14 @@ class TwitterSpyClientActor(twitterId: Long) extends Actor {
 
       println(s"New followers: $newFollowers")
 
-      if (!newFollowers.isEmpty)
+      if (newFollowers.nonEmpty)
         self ! DetectedNewFollowers(newFollowers)
 
       previousFollowerIds = followers
     case DetectedNewFollowers(followerIds) =>
       val followersToBlock = followerIds.filter(id => checkIsBot(id))
-      blockUsers(followersToBlock)
+      TwitterClient.blockUsers(followersToBlock)
   }
 
-  private def lookupFollowers(twitterId: Long): Set[Long] =
-    TwitterClient.allFollowers().toSet
-
   private def checkIsBot(twitterId: Long): Boolean = ???
-
-  private def blockUsers(twitterId: Set[Long]): Unit = ???
 }
