@@ -1,7 +1,7 @@
 package io.github.safety_net.galvatron.twitterSpy
 
 import akka.actor._
-import io.github.safety_net.galvatron.twitterSpy.TwitterSpyClientActor.{DetectedNewFollower, CheckForNewFollowers}
+import io.github.safety_net.galvatron.twitterSpy.TwitterSpyClientActor.{DetectedNewFollowers, CheckForNewFollowers}
 import io.github.safety_net.galvatron.twitterSpy.sdk.TwitterClient
 
 import scala.concurrent.duration._
@@ -32,7 +32,7 @@ object TwitterSpyClientActor {
 
   case object CheckForNewFollowers
 
-  case class DetectedNewFollower(followerId: Long)
+  case class DetectedNewFollowers(followerIds: Set[Long])
 }
 
 class TwitterSpyClientActor(twitterId: Long) extends Actor {
@@ -59,14 +59,13 @@ class TwitterSpyClientActor(twitterId: Long) extends Actor {
 
       println(s"New followers: $newFollowers")
 
-      newFollowers.foreach(followerId => self ! DetectedNewFollower(followerId))
+      if (!newFollowers.isEmpty)
+        self ! DetectedNewFollowers(newFollowers)
 
       previousFollowerIds = followers
-    case DetectedNewFollower(followerId) =>
-      val isBot = checkIsBot(followerId)
-
-      if (isBot)
-        blockUser(followerId)
+    case DetectedNewFollowers(followerIds) =>
+      val followersToBlock = followerIds.filter(id => checkIsBot(id))
+      blockUsers(followersToBlock)
   }
 
   private def lookupFollowers(twitterId: Long): Set[Long] =
@@ -74,5 +73,5 @@ class TwitterSpyClientActor(twitterId: Long) extends Actor {
 
   private def checkIsBot(twitterId: Long): Boolean = ???
 
-  private def blockUser(twitterId: Long): Unit = ???
+  private def blockUsers(twitterId: Set[Long]): Unit = ???
 }
