@@ -8,11 +8,11 @@ import StatusCodes._
 class ThreatAssessmentServiceSpec extends Specification with Specs2RouteTest with ThreatAssessmentService {
   def actorRefFactory = system
 
-  "MyService" should {
+  "ThreatAssessmentService" should {
 
     "return a greeting for GET requests to the root path" in {
-      Get() ~> myRoute ~> check {
-        responseAs[String] must contain("Say hello")
+      Get("/threatAssessments?twitterUsername=james") ~> myRoute ~> check {
+        responseAs[String] shouldEqual ("{\n  \"twitterUsername\": \"james\",\n  \"isBot\": true\n}")
       }
     }
 
@@ -23,7 +23,7 @@ class ThreatAssessmentServiceSpec extends Specification with Specs2RouteTest wit
     }
 
     "return a MethodNotAllowed error for PUT requests to the root path" in {
-      Put() ~> sealRoute(myRoute) ~> check {
+      Put("/threatAssessments") ~> sealRoute(myRoute) ~> check {
         status === MethodNotAllowed
         responseAs[String] === "HTTP method not allowed, supported methods: GET"
       }
