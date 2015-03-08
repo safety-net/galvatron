@@ -12,7 +12,7 @@ class ThreatAssessmentServiceSpec extends Specification with Specs2RouteTest wit
 
     "return a greeting for GET requests to the root path" in {
       Get("/threatAssessments?twitterUsername=james") ~> myRoute ~> check {
-        responseAs[String] shouldEqual ("{\n  \"twitterUsername\": \"james\",\n  \"isBot\": true\n}")
+        responseAs[String] shouldEqual "{\n  \"twitterUsername\": \"james\",\n  \"isBot\": true\n}"
       }
     }
 
