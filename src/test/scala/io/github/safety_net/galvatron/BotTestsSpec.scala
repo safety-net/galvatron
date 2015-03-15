@@ -19,13 +19,24 @@ class BotTestsSpec extends Specification {
   }
 
   "isBot" should {
-    "determine the given user is a bot" in {
+    "determine Vanessa_Daviss is a bot" in {
       val username = "Vanessa_Daviss" // Some bot user
       val result = lzBotTests.isBot(username)
       if (result)
         println(s"user: '$username' is a bot")
         println()
       result must beTrue
+    }
+  }
+
+  "isBot" should {
+    "determine Scott Hanselman is not a bot" in {
+      val username = "shanselman" // Tech  blogger and podcaster
+      val result = lzBotTests.isBot(username)
+      if (!result)
+        println(s"user: '$username' is not a bot")
+        println()
+      result must beFalse
     }
   }
 

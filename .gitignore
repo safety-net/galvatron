@@ -1,4 +1,8 @@
 /.idea
 target
 /src/test/resources/twitterKeys.keys
+/src/test/resources/bots.list
+/src/test/resources/notbots.list
+/src/test/resources/trainingXVals.dat
+/src/test/resources/trainingYVals.dat
 /twitter4j.properties
