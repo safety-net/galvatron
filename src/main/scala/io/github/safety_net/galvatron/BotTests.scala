@@ -58,26 +58,22 @@ class BotTests(consumerKey:String,consumerSecret:String,accessToken:String,acces
     searchResult.getTweets().size()
   }
 
-  def isBot(username: String) : Boolean = {
-    //TODO - improve decision logic via some stats or machine learning.
+  // Uses Structured Machine Learning unless optionally disabled.
+  def isBot(username: String, noML: Boolean = false) : Boolean = {
     //Current Tests:
-    val dupes = maxDupeTweetCount(username)
-    if(dupes > 10)
-       return true
-    val recipPer = reciprocationPercentage(username)
-      if(dupes > 1 && recipPer < 0.1)
-        return true
-    false
+    val dupeTweets = maxDupeTweetCount(username)
+    val recipPercent = reciprocationPercentage(username)
+    if(noML)
+      return isBotNoML(username,dupeTweets,recipPercent)
+
+    DataProcessing.normalEquation(dupeTweets,recipPercent)
   }
 
-  def sgdPrediction(username: String) : Boolean = {
-    // h(x) = theta0 + theta1 .x1 + theta2 .x2 (all subscript)
-
-    // Cost function J is 1/2 sum of the (hypothesis-training data)^2
-    // We want to minimize the cost function.
-
-
-
+  private def isBotNoML(username: String, dupeTweets: Double, recipPercent: Double) : Boolean = {
+    if(dupeTweets > 10)
+      return true
+    if(dupeTweets > 1 && recipPercent < 0.1)
+      return true
     false
   }
 }
